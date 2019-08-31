@@ -189,3 +189,70 @@ printAllNumbersThenAllPairSums([1,2,3,4,5])
 // Data Structures
 // Function Call
 // Allocations
+
+
+// Given 2 arrays, create a function that lets a user know (true/false)
+// whether these two arrays contain any common items
+const array1 = ['a', 'b', 'c', 'x'];
+const array2 = ['z', 'y', 'a'];
+
+function containsCommonItem(arr1, arr2) {
+  for (let i = 0; i < arr1.length; i++) {
+    for (let j = 0; j < arr2.length; j++) {
+      if (arr1[i] === arr2[j]) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+containsCommonItem(array1, array2);
+
+// Because these two arrays can be different sizes the BIG 0 is actually 0(a * b)
+// if array sizes are the same it could be 0(n^2)
+// this solution is slower but it has a better space complexity which is 0(1) constant
+// because we are not creating any new variables only using the given input arrays
+
+// Is there a way to turn this 0(a * b) to have a better BIG 0
+const array1 = ['a', 'b', 'c', 'x'];
+const array2 = ['z', 'y', 'a'];
+
+// array1 will be converted to an object where all the proerties are equal to true. {
+// a: true
+// b: true
+// c: true
+// x: true
+// }
+// check to see if array2[index] === object.properties
+
+// this solution is much better on time complexity because instead of nested loops which 
+// have a time complexity of 0(a * b) this function has two seperate loops
+// which give it a time complexity of 0(a = b)
+
+function containsCommonItem2(arr1, arr2) {
+  // loop through first array and create object where properties === items in the array
+  let object = {};
+  for (let i = 0; i < arr1.length; i++) {
+    if(!object[arr1[i]]) {
+      const createdKey = arr[i];
+      object[createdKey] = true;
+    }
+  }
+  //loop through second array and check if item in second array exists on created object
+  for (let j = 0; j < arr2.length; j++) {
+    if (object[arr2[j]]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+containsCommonItem2(array1, array2);
+
+// BIG 0 of 0(a + b) this solution is faster, but its space compleity is heavier
+// because we are creating a new object which takes up memory this function has
+// a space complexity of 0(a) which is the first array
+
+
+
