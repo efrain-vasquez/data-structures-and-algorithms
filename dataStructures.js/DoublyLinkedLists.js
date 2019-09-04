@@ -1,65 +1,14 @@
-//JavaScript doesnt come with pre built Linked Lists but we can build our own.
-//pseudo-code of linked list
-const basket = ['apples', 'grapes', 'pears']
-
-linked list: apples --> grapes --> pears
-
-apples
-8947 --> grapes
-          8742 --> pears
-                    372 --> null
 
 
-//animation tool to help understand linked lists
-//https://visualgo.net/en/list
-
-//linked lists have a loose structure meaning you can insert or delete a value into the middle
-//of the list by simply resetting a few pointers.
-//dont need to shift the indexes when insert or delete within the list.
-//to search for a node we have to traverse the list till you find the node your looking for.
-//in an array since they are indexed you can go directly to the item if you know the index
-//in arrays the items are usually located next to each other in memory which makes them faster to
-//work with than linked list which have items scattered in memory.
-//one advantage linked lists have over hash tables / objects is 
-//that they have a sorted order each node points to the next node.
-//prepend 0(1), append 0(1), lookup/traversal 0(1), insert 0(n), delete 0(n)
-//JS is garbaged collected meaning memory is mananged automatically
 
 
-// Create the below linked list:
-// myLinkedList = {
-//   head: {
-//     value: 10
-//     next: {
-//       value: 5
-//       next: {
-//         value: 16
-//         next: null
-//       }
-//     }
-//   }
-// };
-
-  //we do not want to repeat ourselves when writing code
-  //object oriented programming usually work by having classes 
-  //that interact with other classes to create our programs.
-  //this is a good example we could use in our linked list but to make it easier
-  //to understand we will just rewrite the code instead
-
-/*
-  class Node {
-  constructor(value) {
-    this.value = value;
-    this.next = null;
-  }
-}
-*/
-
-class LinkedList {//constructor is about creating first linked list node
+class DoublyLinkedList {//constructor is about creating first linked list node
     constructor(value) {//list can not be empty has to have a value
       this.head = {// inside this object is a node. all nodes need a value property and a pointer
         value: value,//value property of the node
-        next: null//pointer property that points to the next node. the last node points to null
+        next: null,//pointer property that points to the next node. the last node points to null
+        prev: null//this previous pointer will begin at null because its the first node 
+        //so the head will point to null
       };
       this.tail = this.head;//only one item so head is the tail
       this.length = 1;//only one node so length is 1
@@ -71,8 +20,12 @@ class LinkedList {//constructor is about creating first linked list node
       //to create a new object
       const newNode =  {
       value: value, //value equals value we get as a parameter
-      next: null
+      next: null,//a null property whos value is null
+      prev: null//append is adding a new node whos previous property also points to null to begin with
       };//remember next = null
+      newNode.prev = this.tail;//we need to add a previous property because append adds to
+      //the end of the list. we want to add a previous property to equal whatever was at the end
+      //of the original list before we did the append
       this.tail.next = newNode;//it grabs the pointer of the tail and says instead of pointing
                               //it to null point it to the new node we created
       this.tail = newNode;//what we had as tail before is no longer the tail we 
@@ -90,10 +43,14 @@ class LinkedList {//constructor is about creating first linked list node
       //we can use this instead of having to rewrite the following code  
       const newNode = {//first we create our new node
         value: value,//value is set to the value we get from parameter
-        next: null//next = null because its the last node
+        next: null,//next = null because its the last node
+        prev: null//add a new previous property that points to null for now
         }//remember next = null
         newNode.next = this.head;//the head becomes the next node after the newNode
-        this.head = newNode;//then we update our head to become the newNode
+        //the newNode.next points to whatever the head is currently
+        this.head.prev = newNode;//the prev should now point to our newNode because the original
+        //head of the list is no longer the head because now our newNode becomes the current head
+        this.head = newNode;//then we update our head to become our newNode
         this.length++;//increment the length to account for the newNode
         return this;//this just references what this class is that gets instantiated
                     //we return this so we get back the link list
@@ -116,7 +73,8 @@ class LinkedList {//constructor is about creating first linked list node
       //we could create the Node class here if we wanted using the class Node at the top that is commented out
       const newNode = {//create new object that has  
           value: value,//a value property with a value that comes from parameter
-          next: null//and a next property with a value of null
+          next: null,//and a next property with a value of null
+          prev: null//we add a previous property that will be null for now
       };
       //remember a link list only has reference to this.head and this.tail
       //to get a reference to any other node we need to traverse the list
@@ -124,17 +82,26 @@ class LinkedList {//constructor is about creating first linked list node
       //newNode to, so we need to traverse our list to get reference to it. the newNode will point
       //to this node we are referencing, which we are calling leader.
       //we still have to create this traverseToIndex method 
-      const holdingPointer = leader.next;//because of the way JS works this variable allows us to save 
-      //in memory what this pointer use to point to, which is the node that use to come after leader
-      leader.next = newNode
+
+      //now we are going to do things a little differently than when using single Linked List.
+      //we need to grab the leader as well as the follower so we change name of leader.next to follower.
+      const follower = leader.next;//this is to store a reference to the node that comes after the 
+      //node that we are inserting. also known as the node that originally came after the leader
+      leader.next = newNode;//so we update the leader.next to now point to the node we are  
+      //inserting which is our newNode so the leader is now pointing to our newNode instead 
+      //of pointing to the node that originally came after the leader
+      newNode.prev = leader;//we also want to make sure our newNode 
+      //has a previous property that points to the leader
+      follower.prev = newNode;//also make sure that the node that comes after the newNode has
+      //a previous property that points to the newNode
+
       //now we make sure we can reference the next node on the
       //list that comes after the leader, we do this by saving that item to a variable
-      //by doing this we can now reference leader.next and point it to newNode. 
+      //in this way we can now reference leader.next and point it to newNode. 
       //By doing this we have deleted the old referenceor the old pointer, meaning the reference  
       //to the to the old node that use to come after leader but we still have that reference
-      //saved in the holdingPointer variable and allows us to use it here
-      newNode.next = holdingPointer;//here we are able to point the newNode 
-      //to the node that use to come after the leader
+      //saved in the follwer variable and allows us to use it here
+      newNode.next = follower;
       this.length++;//because we have added to the list we increment the length
       return this.printList();//this is to check if we have inserted properly
     } 
@@ -174,36 +141,10 @@ class LinkedList {//constructor is about creating first linked list node
         this.length--;//we decrease the length by one, since we removed a node.
         return this.printList();//we check to see if the deletion was done correctly
       }
-
-    reverse() {
-      if (!this.head.next) {//if head.next does not exist meaning this is the only node
-        return this.head;//simply return this node which is the head
-      }
-      let first = this.head;//we do this to get a reference to the head node
-      this.tail = this.head;//we do this because the tail will become the head
-      let second = first.next;//we do this to get a reference to the second node
-      while(second) {//while the second node exists meaning while second has a value and is not null
-        const temp = second.next;//create a reference to the node that comes after second by 
-        //creating temp variable and point it towards second.next which is the second node
-        //so we reverse the pointer from temp (third node) to second node
-        second.next = first;//so now i can change the refernce of the second node and instead of 
-        //pointing to the node that comes after it (temp/third node) point it to the first node (originally the head)
-        //basically we are reversing the direction of the pointers
-        first = second;//here we are switching variables so we are switching nodes 
-        //we switch the first node with the second node
-        second = temp;//here we are switching the second node with the temp node
-        //which is the one that originally came after it 
-        //basically we are reversing the order of the nodes
-      }
-      this.head.next = null;//because this.head still has the value of the original head tied to it
-      //we are going to say that this.head.next is equal to null. we will have the original head 
-      //now point to null //we do this because the head becomes the tail
-      this.head = first;//we change this.head to be the variable first so that it can become the tail
-      //because up above this.tail = this.head; //we do this because the tail becomes the head
-    }
 }                         
-  
-let myLinkedList = new LinkedList(10);
+
+
+let myLinkedList = new DoublyLinkedList(10);
 myLinkedList.append(5);
 myLinkedList.append(16);
 myLinkedList.prepend(1);
@@ -214,6 +155,4 @@ myLinkedList.insert(20, 88);
 myLinkedList.remove(2);
 myLinkedList.printList();
 //console.log(mylinkedList);
-  
-  
   
