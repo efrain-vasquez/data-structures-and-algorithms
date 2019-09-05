@@ -55,9 +55,11 @@ class HashTable {
   
     set(key, value) {
       let address = this._hash(key); // create a place in memory using hash function to store this
-      if (!this.data[address]) {
+      if (!this.data[address]) { // we do this to check to see if this address exists
+        //then we create an array to push our items in case we have multiple items 
+        // so if we have a collision we can store multiple items
         this.data[address] = []; // if memory space is empty add an array to this memory slot
-      }
+      }// this can be modified to a link list instead of an array so a delete becomes a lot easier
       this.data[address].push([key, value]); // if memory space has something in it do not delete 
       return this.data;                      // whats there instead add this to the memory space
     }
@@ -97,7 +99,7 @@ class HashTable {
 
 /*
   even though were doing a loop within the hash function 
-  we dont consider it 0(n) we are just looping over the specific skey so it still 0(1)
+  we dont consider it 0(n) we are just looping over the specific key so it still 0(1)
   if no collisions then it is just 0(1) if there are collisions it could become 0(n).
   when we set something there is no loops we are just adding it to our data were just pushing it
 

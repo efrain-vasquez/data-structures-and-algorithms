@@ -44,8 +44,6 @@ apples
   //object oriented programming usually work by having classes 
   //that interact with other classes to create our programs.
   //this is a good example we could use in our linked list but to make it easier
-  //to understand we will just rewrite the code instead
-
 /*
   class Node {
   constructor(value) {
@@ -54,6 +52,8 @@ apples
   }
 }
 */
+//but to make it easier to understand we will just rewrite the code instead
+
 
 class LinkedList {//constructor is about creating first linked list node
     constructor(value) {//list can not be empty has to have a value
@@ -67,11 +67,11 @@ class LinkedList {//constructor is about creating first linked list node
 
     append(value) {
       //const newNode = new Node(value); 
-      //we can use the code above instead of having to rewrite the following code 
-      //to create a new object
+      //we can use the code above instead of having to rewrite the following code to create a new object
+      //but to make it easier to understand we will just rewrite the code instead
       const newNode =  {
       value: value, //value equals value we get as a parameter
-      next: null
+      next: null//next property that has a value of null
       };//remember next = null
       this.tail.next = newNode;//it grabs the pointer of the tail and says instead of pointing
                               //it to null point it to the new node we created
